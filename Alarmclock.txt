@@ -70,8 +70,6 @@ public class clock {
                 }, 0, 1000);
             }
         });
-
-        // Make the frame visible
         frame.setVisible(true);
     }
 }
