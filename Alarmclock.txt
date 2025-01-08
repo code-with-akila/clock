@@ -1,0 +1,77 @@
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.time.LocalTime;
+import java.util.Timer;
+import java.util.TimerTask;
+import javax.swing.*;
+
+public class clock {
+    private static JLabel statusLabel;
+    private static JLabel currentTimeLabel;
+
+    public static void main(String[] args) 
+    {
+        JFrame frame = new JFrame("Alarm Clock");
+        frame.setSize(400, 280);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setLayout(new FlowLayout());
+
+        JLabel titleLabel = new JLabel("Alarm Clock");
+        titleLabel.setFont(new Font("Cascadia Mono SemiBold", Font.BOLD, 22));
+        frame.add(titleLabel);
+
+        JLabel alarmTimeLabel = new JLabel("Set Alarm (HH:MM:SS)");
+        alarmTimeLabel.setFont(new Font("Cascadia Mono SemiBold", Font.PLAIN, 15));
+        alarmTimeLabel.setForeground(Color.RED);
+        frame.add(alarmTimeLabel);
+
+        JTextField alarmTimeField = new JTextField(15);
+        alarmTimeField.setFont(new Font("Cascadia Mono SemiBold", Font.PLAIN, 12));
+        frame.add(alarmTimeField);
+
+        JButton setAlarmButton = new JButton("Set Alarm");
+        frame.add(setAlarmButton);
+
+        statusLabel = new JLabel("");
+        statusLabel.setFont(new Font("Eras Bold ITC", Font.PLAIN, 12));
+        frame.add(statusLabel);
+
+        currentTimeLabel = new JLabel("");
+        currentTimeLabel.setFont(new Font("Eras Bold ITC", Font.PLAIN, 12));
+        frame.add(currentTimeLabel);
+
+        Timer currentTimeTimer = new Timer();
+        currentTimeTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                String currentTime = LocalTime.now().withNano(0).toString();
+                currentTimeLabel.setText("Current Time: " + currentTime);
+            }
+        }, 0, 1000);
+
+        setAlarmButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String alarmTime = alarmTimeField.getText();
+                statusLabel.setText("Alarm set for: " + alarmTime);
+
+                Timer alarmTimer = new Timer();
+                alarmTimer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        String currentTime = LocalTime.now().withNano(0).toString();
+                        if (currentTime.equals(alarmTime)) {
+                            Toolkit.getDefaultToolkit().beep();
+                            statusLabel.setText("Alarm is ringing!");
+                            alarmTimer.cancel();
+                        }
+                    }
+                }, 0, 1000);
+            }
+        });
+
+        // Make the frame visible
+        frame.setVisible(true);
+    }
+}
